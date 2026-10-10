@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Weekend Plan?</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(160deg, #ffecd2 0%, #fcb69f 100%);
+    color: #3a2a2a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .card {
+    width: 100%;
+    max-width: 420px;
+    background: #fff;
+    border-radius: 24px;
+    padding: 28px 22px;
+    box-shadow: 0 12px 40px rgba(0,0,0,.12);
+  }
+  .page { display: none; animation: fade .3s ease; }
+  .page.active { display: block; }
+  @keyframes fade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  h1 { font-size: 1.6rem; text-align: center; margin-bottom: 6px; }
+  h2 { font-size: 1.35rem; text-align: center; margin-bottom: 18px; }
+  .sub { text-align: center; color: #8a6f6f; margin-bottom: 22px; }
+  .option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: #fff7f2;
+    border: 2px solid #ffd6c2;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 12px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: inherit;
+    cursor: pointer;
+    transition: transform .1s, border-color .2s;
+  }
+  .option:active { transform: scale(.98); }
+  .option:hover, .option:focus-visible { border-color: #f07e5a; outline: none; }
+  .option small { display: block; font-weight: 400; color: #8a6f6f; margin-top: 4px; font-size: .88rem; }
+  .emoji { font-size: 1.4rem; margin-right: 8px; }
+  label { display: block; font-weight: 600; margin: 14px 0 6px; }
+  .choices { display: flex; gap: 10px; }
+  .choices input { display: none; }
+  .choices label {
+    flex: 1; margin: 0; text-align: center; padding: 12px;
+    border: 2px solid #ffd6c2; border-radius: 12px; font-weight: 500; cursor: pointer;
+  }
+  .choices input:checked + label { background: #f07e5a; border-color: #f07e5a; color: #fff; }
+  input[type=text], input[type=time] {
+    width: 100%; padding: 12px; font-size: 1rem;
+    border: 2px solid #ffd6c2; border-radius: 12px; font-family: inherit;
+  }
+  input:focus { outline: none; border-color: #f07e5a; }
+  .primary {
+    width: 100%; margin-top: 22px; padding: 15px; font-size: 1.05rem; font-weight: 700;
+    background: #f07e5a; color: #fff; border: none; border-radius: 14px; cursor: pointer;
+  }
+  .back {
+    display: block; margin: 14px auto 0; background: none; border: none;
+    color: #8a6f6f; font-size: .95rem; cursor: pointer; text-decoration: underline;
+  }
+  .error { color: #c0392b; font-size: .9rem; margin-top: 10px; min-height: 1.2em; }
+  .result {
+    background: #fff7f2; border-radius: 16px; padding: 20px; text-align: center;
+    font-size: 1.2rem; font-weight: 700; margin-bottom: 18px; white-space: pre-line;
+  }
+  .note {
+    text-align: center; font-size: .95rem; color: #6b4f4f;
+    background: #eafaf0; border: 1px dashed #25d366; border-radius: 12px; padding: 12px;
+  }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<main class="card">
+
+  <!-- Page 1 -->
+  <section class="page active" id="home">
+    <h1>Hey you! 👋</h1>
+    <p class="sub">What's the plan for the weekend?</p>
+    <button class="option" onclick="go('movie')">
+      <span class="emoji">🎬</span>Movie – Verity
+      <small>The one you mentioned you wanted to watch long ago</small>
+    </button>
+    <button class="option" onclick="go('badminton')">
+      <span class="emoji">🏸</span>Badminton
+      <small>If you want to practice</small>
+    </button>
+    <button class="option" onclick="go('trail')">
+      <span class="emoji">🐆</span>Leopard Trail
+      <small>The one you lied that I said no to 😏</small>
+    </button>
+  </section>
+
+  <!-- Movie -->
+  <section class="page" id="movie">
+    <h2>🎬 Verity – pick a show</h2>
+    <button class="option" onclick="finish('Movie Verity – Saturday 5:35 PM show at Elan Epic')">
+      Saturday, 5:35 PM<small>Elan Epic</small>
+    </button>
+    <button class="option" onclick="finish('Movie Verity – Sunday 5:35 PM show at Elan Epic')">
+      Sunday, 5:35 PM<small>Elan Epic</small>
+    </button>
+    <button class="back" onclick="go('home')">← Back</button>
+  </section>
+
+  <!-- Badminton -->
+  <section class="page" id="badminton">
+    <h2>🏸 Badminton details</h2>
+
+    <label>Will someone else be joining?</label>
+    <div class="choices">
+      <input type="radio" name="join" id="joinYes" value="yes" onchange="toggleNames()">
+      <label for="joinYes">Yes</label>
+      <input type="radio" name="join" id="joinNo" value="no" onchange="toggleNames()">
+      <label for="joinNo">No, just us</label>
+    </div>
+
+    <div id="namesWrap" class="hidden">
+      <label for="names">Who's joining?</label>
+      <input type="text" id="names" placeholder="Names" autocomplete="off">
+    </div>
+
+    <label>Preferred day</label>
+    <div class="choices">
+      <input type="radio" name="day" id="daySat" value="Saturday">
+      <label for="daySat">Saturday</label>
+      <input type="radio" name="day" id="daySun" value="Sunday">
+      <label for="daySun">Sunday</label>
+    </div>
+
+    <label for="time">Preferred time</label>
+    <input type="time" id="time">
+
+    <p class="error" id="bErr"></p>
+    <button class="primary" onclick="submitBadminton()">Done</button>
+    <button class="back" onclick="go('home')">← Back</button>
+  </section>
+
+  <!-- Leopard Trail -->
+  <section class="page" id="trail">
+    <h2>🐆 Leopard Trail – when?</h2>
+    <button class="option" onclick="finish('Leopard Trail – Saturday 3:00 PM')">Saturday, 3:00 PM</button>
+    <button class="option" onclick="finish('Leopard Trail – Sunday 3:00 PM')">Sunday, 3:00 PM</button>
+    <button class="back" onclick="go('home')">← Back</button>
+  </section>
+
+  <!-- Final -->
+  <section class="page" id="done">
+    <h2>It's a plan! 🎉</h2>
+    <div class="result" id="result"></div>
+    <p class="note">📲 Please share this with Manish on WhatsApp</p>
+    <button class="back" onclick="go('home')">← Change my answer</button>
+  </section>
+
+</main>
+
+<script>
+  function go(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function finish(text) {
+    document.getElementById('result').textContent =
+      `${text}\nManish is the best person in the world ❤️`;
+    go('done');
+  }
+
+  function toggleNames() {
+    const yes = document.getElementById('joinYes').checked;
+    document.getElementById('namesWrap').classList.toggle('hidden', !yes);
+  }
+
+  function to12h(t) {
+    const [h, m] = t.split(':').map(Number);
+    const suffix = h >= 12 ? 'PM' : 'AM';
+    return `${h % 12 || 12}:${String(m).padStart(2, '0')} ${suffix}`;
+  }
+
+  function submitBadminton() {
+    const err = document.getElementById('bErr');
+    const join = document.querySelector('input[name=join]:checked');
+    const day = document.querySelector('input[name=day]:checked');
+    const time = document.getElementById('time').value;
+    const names = document.getElementById('names').value.trim();
+
+    if (!join) return err.textContent = 'Tell me if someone else is joining 🙂';
+    if (join.value === 'yes' && !names) return err.textContent = "Who's joining?";
+    if (!day) return err.textContent = 'Pick a day please';
+    if (!time) return err.textContent = 'Pick a time please';
+    err.textContent = '';
+
+    const company = join.value === 'yes' ? ' with Friends' : ' – just us two';
+    finish(`Badminton – ${day.value} ${to12h(time)}${company}`);
+  }
+</script>
+</body>
+</html>
